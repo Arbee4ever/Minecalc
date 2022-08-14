@@ -6,6 +6,7 @@ import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -17,7 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class CalcHud extends Screen implements HudRenderCallback {
+public class CalcHud extends Screen {
 	private final MinecraftClient client;
 	private static final Identifier TEXTURE = new Identifier("minecalc", "textures/gui/calculator.png");
 	private static ATextField textField;
@@ -34,6 +35,15 @@ public class CalcHud extends Screen implements HudRenderCallback {
 	public CalcHud(MinecraftClient minecraftClient, ItemRenderer itemRenderer) {
 		super(Text.translatable("gui.minecalc.calculator"));
 		client = minecraftClient;
+		HudRenderCallback.EVENT.register((e, e1) -> {
+			scaledWidth = client.getWindow().getScaledWidth();
+			scaledHeight = client.getWindow().getScaledHeight();
+			textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, Text.translatable("test")));
+
+			for (int i = 0; i < calc.length; i++) {
+				addButton(i);
+			}
+		});
 	}
 
 	public void render(MatrixStack matrices, float tickDelta) {
@@ -43,9 +53,11 @@ public class CalcHud extends Screen implements HudRenderCallback {
 	protected void init() {
 	}
 
-	/*public void tick() {
+	@Override
+	public void tick() {
+		super.tick();
 		textField.tick();
-	}*/
+	}
 
 	private void renderCalculator(float tickDelta, MatrixStack matrixStack) {
 		PlayerEntity playerEntity = this.getCameraPlayer();
@@ -121,16 +133,5 @@ public class CalcHud extends Screen implements HudRenderCallback {
 	@Override
 	public boolean isPauseScreen() {
 		return false;
-	}
-
-	@Override
-	public void onHudRender(MatrixStack matrixStack, float tickDelta) {
-		scaledWidth = client.getWindow().getScaledWidth();
-		scaledHeight = client.getWindow().getScaledHeight();
-		textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, Text.translatable("test")));
-
-		for(int i = 0; i<calc.length; i++) {
-			addButton(i);
-		}
 	}
 }
