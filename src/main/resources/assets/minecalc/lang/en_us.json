@@ -1,0 +1,22 @@
+{
+  "gui.minecalc.AC": "AC",
+  "gui.minecalc.(": "(",
+  "gui.minecalc.)": ")",
+  "gui.minecalc./": "/",
+  "gui.minecalc.*": "*",
+  "gui.minecalc.-": "-",
+  "gui.minecalc.+": "+",
+  "gui.minecalc.=": "=",
+  "gui.minecalc.«": "«",
+  "gui.minecalc..": ".",
+  "gui.minecalc.0": "0",
+  "gui.minecalc.1": "1",
+  "gui.minecalc.2": "2",
+  "gui.minecalc.3": "3",
+  "gui.minecalc.4": "4",
+  "gui.minecalc.5": "5",
+  "gui.minecalc.6": "6",
+  "gui.minecalc.7": "7",
+  "gui.minecalc.8": "8",
+  "gui.minecalc.9": "9"
+}

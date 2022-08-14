@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 
 public class CalcGui extends LightweightGuiDescription {
 	WGridPanel root = new WGridPanel();
-	ATextField textField = new ATextField();
+	ATextField textField;
 	String[] calc = {
 			"AC", "(", ")", "/",
 			"7", "8", "9", "*",
@@ -22,8 +22,6 @@ public class CalcGui extends LightweightGuiDescription {
 		setRootPanel(root);
 		root.setInsets(Insets.ROOT_PANEL);
 
-		root.add(textField, 0, 0, 4, 3);
-		textField.canResize();
 		textField.setMaxLength(999999999);
 
 		for(int i = 0; i<calc.length; i++) {

@@ -5,11 +5,13 @@ import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import com.mojang.blaze3d.platform.InputUtil;
 import de.arbeeco.minecalc.client.gui.CalcGui;
+import de.arbeeco.minecalc.client.gui.renderer.CalcHud;
 import de.arbeeco.minecalc.client.screens.CalcScreen;
 import de.arbeeco.minecalc.config.Config;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +42,6 @@ public class MinecalcClient implements ClientModInitializer {
 		ClientTickEvents.END.register(client -> {
 			while (keyBinding.wasPressed()) {
 				MinecalcClient.config.showCalculator = !MinecalcClient.config.showCalculator;
-				MinecraftClient.getInstance().setScreen(new CalcScreen(new CalcGui()));
 			}
 		});
 	}
