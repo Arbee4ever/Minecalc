@@ -8,6 +8,14 @@ version = project.version
 group = project.maven_group
 
 repositories {
+	maven { url "https://maven.shedaniel.me/" }
+	maven {
+		name = "CottonMC"
+		url = "https://server.bbkr.space/artifactory/libs-release"
+	}
+}
+
+repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -24,6 +32,13 @@ dependencies {
 		// officialMojangMappings() // Uncomment if you want to use Mojang mappings as your primary mappings, falling back on QM for parameters and Javadocs
 	}
 	modImplementation libs.quilt.loader
+	modImplementation include("io.github.cottonmc:LibGui:6.0.0+1.19")
+
+	implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
+
+	modApi("me.shedaniel.cloth:cloth-config-fabric:8.0.75") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
 	// QSL is not a complete API; You will need Quilted Fabric API to fill in the gaps.
 	// Quilted Fabric API will automatically pull in the correct QSL version.
