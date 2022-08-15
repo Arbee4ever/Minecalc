@@ -3,16 +3,10 @@ package de.arbeeco.minecalc.client.gui.renderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
-import io.github.cottonmc.cotton.gui.widget.WButton;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -32,49 +26,46 @@ public class CalcHud extends Screen {
 			"0", ".", "«", "="
 	};
 
-	public CalcHud(MinecraftClient minecraftClient, ItemRenderer itemRenderer) {
+	public CalcHud(MinecraftClient minecraftClient) {
 		super(Text.translatable("gui.minecalc.calculator"));
 		client = minecraftClient;
-		HudRenderCallback.EVENT.register((e, e1) -> {
-			scaledWidth = client.getWindow().getScaledWidth();
-			scaledHeight = client.getWindow().getScaledHeight();
-			textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, Text.translatable("test")));
-
-			for (int i = 0; i < calc.length; i++) {
-				addButton(i);
-			}
-		});
 	}
 
 	public void render(MatrixStack matrices, float tickDelta) {
-		renderCalculator(tickDelta, matrices);
-	}
+		PlayerEntity playerEntity = this.getCameraPlayer();
+		if (playerEntity != null) {
+			if (MinecalcClient.config.showCalculator) {
+				renderCalculator(matrices);
 
-	protected void init() {
+				scaledWidth = client.getWindow().getScaledWidth();
+				scaledHeight = client.getWindow().getScaledHeight();
+				textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField ,Text.translatable("test")));
+
+				textField.render(matrices, (int) client.mouse.getX(), (int) client.mouse.getY(), tickDelta);
+
+				for (int i = 0; i < calc.length; i++) {
+					addButton(i).render(matrices, (int) client.mouse.getX(), (int) client.mouse.getY(), tickDelta);
+				}
+			}
+		}
 	}
 
 	@Override
 	public void tick() {
-		super.tick();
 		textField.tick();
 	}
 
-	private void renderCalculator(float tickDelta, MatrixStack matrixStack) {
-		PlayerEntity playerEntity = this.getCameraPlayer();
-		if (playerEntity != null) {
-			if (MinecalcClient.config.showCalculator) {
-				scaledWidth = client.getWindow().getScaledWidth();
-				scaledHeight = client.getWindow().getScaledHeight();
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-				RenderSystem.setShader(GameRenderer::getPositionTexShader);
-				RenderSystem.setShaderTexture(0, TEXTURE);
-				int j = this.getZOffset();
-				this.setZOffset(-90);
-				this.drawTexture(matrixStack, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
+	private void renderCalculator(MatrixStack matrixStack) {
+		scaledWidth = client.getWindow().getScaledWidth();
+		scaledHeight = client.getWindow().getScaledHeight();
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, TEXTURE);
+		int j = this.getZOffset();
+		this.setZOffset(-90);
+		this.drawTexture(matrixStack, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
 
-				this.setZOffset(j);
-			}
-		}
+		this.setZOffset(j);
 	}
 
 	private ButtonWidget addButton(int i) {
@@ -109,19 +100,6 @@ public class CalcHud extends Screen {
 
 	private PlayerEntity getCameraPlayer() {
 		return !(client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)client.getCameraEntity();
-	}
-
-	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == 256 && this.shouldCloseOnEsc()) {
-			closeScreen();
-			return true;
-		}
-		if (keyCode == 82 && this.shouldCloseOnEsc()) {
-			closeScreen();
-			return true;
-		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 
 	@Override

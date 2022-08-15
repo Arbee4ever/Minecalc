@@ -9,8 +9,8 @@ import org.mariuszgromada.math.mxparser.Expression;
 
 public class ATextField extends TextFieldWidget {
 
-	public ATextField(TextRenderer textRenderer, int x, int y, int width, int height, MutableText text) {
-		super(textRenderer, x, y, width, height, text);
+	public ATextField(TextRenderer textRenderer, int x, int y, int width, int height, TextFieldWidget textFieldWidget,MutableText text) {
+		super(textRenderer, x, y, width, height, textFieldWidget, text);
 	}
 
 	public void calculate(String in) {

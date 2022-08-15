@@ -41,7 +41,11 @@ public class MinecalcClient implements ClientModInitializer {
 		));
 		ClientTickEvents.END.register(client -> {
 			while (keyBinding.wasPressed()) {
-				MinecalcClient.config.showCalculator = !MinecalcClient.config.showCalculator;
+				if (client.mouse.isCursorLocked()) {
+					client.mouse.unlockCursor();
+				} else {
+					client.mouse.lockCursor();
+				}
 			}
 		});
 	}

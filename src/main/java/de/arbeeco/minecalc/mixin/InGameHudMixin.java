@@ -15,7 +15,7 @@ public class InGameHudMixin {
 	private CalcHud calcHud;
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
 	public void init(MinecraftClient minecraftClient, ItemRenderer itemRenderer, CallbackInfo ci) {
-		this.calcHud = new CalcHud(minecraftClient, itemRenderer);
+		this.calcHud = new CalcHud(minecraftClient);
 	}
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V"))
