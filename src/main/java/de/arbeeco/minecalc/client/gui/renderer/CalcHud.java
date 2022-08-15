@@ -29,6 +29,7 @@ public class CalcHud extends Screen {
 	public CalcHud(MinecraftClient minecraftClient) {
 		super(Text.translatable("gui.minecalc.calculator"));
 		client = minecraftClient;
+		isPauseScreen();
 	}
 
 	public void render(MatrixStack matrices, float tickDelta) {
@@ -72,7 +73,7 @@ public class CalcHud extends Screen {
 		ButtonWidget button;
 		int x = scaledHeight - 25 - (calc.length - i - 1) / 4 * 20;
 		int y = scaledWidth - 25 - (calc.length - i - 1) % 4 * 20;
-		switch (i%4) {
+		switch (i) {
 			case 0 -> {
 				button = new ButtonWidget(y, x, 20, 20, Text.translatable("gui.minecalc." + calc[i]), (button1) -> {
 					textField.setText("");
@@ -94,7 +95,7 @@ public class CalcHud extends Screen {
 				});
 			}
 		}
-		addDrawable(button);
+		addDrawableChild(button);
 		return button;
 	}
 
