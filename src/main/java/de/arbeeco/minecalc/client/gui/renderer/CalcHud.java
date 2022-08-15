@@ -37,10 +37,17 @@ public class CalcHud extends Screen {
 		if (playerEntity != null) {
 			if (MinecalcClient.config.showCalculator) {
 				renderCalculator(matrices);
+			}
+		}
+	}
 
+	public void init(MatrixStack matrices, float tickDelta) {
+		PlayerEntity playerEntity = this.getCameraPlayer();
+		if (playerEntity != null) {
+			if (MinecalcClient.config.showCalculator) {
 				scaledWidth = client.getWindow().getScaledWidth();
 				scaledHeight = client.getWindow().getScaledHeight();
-				textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField ,Text.translatable("test")));
+				textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.translatable("test")));
 
 				textField.render(matrices, (int) client.mouse.getX(), (int) client.mouse.getY(), tickDelta);
 
