@@ -4,15 +4,11 @@ import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import com.mojang.blaze3d.platform.InputUtil;
-import de.arbeeco.minecalc.client.gui.CalcGui;
 import de.arbeeco.minecalc.client.gui.renderer.CalcHud;
-import de.arbeeco.minecalc.client.screens.CalcScreen;
 import de.arbeeco.minecalc.config.Config;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBind;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -32,6 +28,9 @@ public class MinecalcClient implements ClientModInitializer {
 	public static final Jankson jankson = Jankson.builder().build();
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
+			CalcHud.init(matrixStack, deltaTick);
+		});
 		config = loadConfig();
 		KeyBind keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBind(
 				"key.minecalc.opencalc",
