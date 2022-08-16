@@ -49,10 +49,10 @@ public class CalcHud extends Screen {
 				scaledHeight = client.getWindow().getScaledHeight();
 				textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.translatable("test")));
 
-				textField.render(matrices, (int) client.mouse.getX(), (int) client.mouse.getY(), tickDelta);
+				textField.render(matrices, (int)getX(), (int)getY(), tickDelta);
 
 				for (int i = 0; i < calc.length; i++) {
-					addButton(i).render(matrices, (int) client.mouse.getX(), (int) client.mouse.getY(), tickDelta);
+					addButton(i).render(matrices, (int)getX(), (int)getY(), tickDelta);
 				}
 			}
 		}
@@ -102,12 +102,26 @@ public class CalcHud extends Screen {
 				});
 			}
 		}
-		addDrawableChild(button);
+		addSelectableChild(button);
 		return button;
 	}
 
 	private PlayerEntity getCameraPlayer() {
 		return !(client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)client.getCameraEntity();
+	}
+
+	private double getX() {
+		if(client.mouse.isCursorLocked()) {
+			return 0;
+		}
+		return client.mouse.getX();
+	}
+
+	private double getY() {
+		if(client.mouse.isCursorLocked()) {
+			return 0;
+		}
+		return client.mouse.getY();
 	}
 
 	@Override
