@@ -8,6 +8,7 @@ import de.arbeeco.minecalc.client.gui.renderer.CalcHud;
 import de.arbeeco.minecalc.config.Config;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBind;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,7 +30,7 @@ public class MinecalcClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient(ModContainer mod) {
 		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
-			CalcHud.init(matrixStack, deltaTick);
+			new CalcHud(MinecraftClient.getInstance()).init(matrixStack, deltaTick);
 		});
 		config = loadConfig();
 		KeyBind keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBind(
