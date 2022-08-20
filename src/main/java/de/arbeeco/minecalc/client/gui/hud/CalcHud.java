@@ -14,6 +14,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
 public class CalcHud extends Screen {
 	private final MinecraftClient client;
 	private static final Identifier TEXTURE = new Identifier("minecalc", "textures/gui/calculator.png");
@@ -27,6 +31,12 @@ public class CalcHud extends Screen {
 			"1", "2", "3", "+",
 			"0", ".", "«", "="
 	};
+	String[] calcUtil = {
+			"x",
+			"y",
+			"z",
+			"⎘"
+	};
 
 	public CalcHud(MinecraftClient minecraftClient) {
 		super(Text.translatable("gui.minecalc.calculator"));
@@ -38,7 +48,9 @@ public class CalcHud extends Screen {
 		if (playerEntity != null) {
 			scaledWidth = client.getWindow().getScaledWidth();
 			scaledHeight = client.getWindow().getScaledHeight();
-			textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.translatable("test")));
+			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.literal(""));
+			addSelectableChild(textField);
+			setInitialFocus(textField);
 			super.init();
 		}
 	}
@@ -55,6 +67,21 @@ public class CalcHud extends Screen {
 
 					for (int i = 0; i < calc.length; i++) {
 						addButton(i).render(matrices, (int) getX(), (int) getY(), tickDelta);
+					}
+					for (int i = 0; i < calcUtil.length; i++) {
+						int x = scaledHeight - 25 - 20*(calcUtil.length - i);
+						int y = scaledWidth - 30 - 20*4;
+						int finalI = i;
+						addSelectableChild(new ButtonWidget(y, x, 20, 20, Text.translatable("gui.minecalc." + calcUtil[i]), (button1) -> {
+							if (finalI == 3) {
+								System.setProperty("java.awt.headless", "false");
+								StringSelection selection = new StringSelection(textField.getText().split("=")[1]);
+								Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+								clipboard.setContents(selection, null);
+							} else {
+								textField.setText(textField.getText() + getCoord(calcUtil[finalI]));
+							}
+						})).render(matrices, (int) getX(), (int) getY(), tickDelta);
 					}
 				}
 			}
@@ -129,6 +156,15 @@ public class CalcHud extends Screen {
 		return (int)(this.client.mouse.getY() * this.client.getWindow().getScaledHeight() / (double)this.client.getWindow().getHeight());
 	}
 
+	private int getCoord(String axis) {
+		return switch (axis) {
+			case "x" -> (int) getCameraPlayer().getX();
+			case "y" -> (int) getCameraPlayer().getY();
+			case "z" -> (int) getCameraPlayer().getZ();
+			default -> 000;
+		};
+	}
+
 	@Override
 	public void closeScreen() {
 		super.closeScreen();
@@ -153,6 +189,10 @@ public class CalcHud extends Screen {
 		}
 		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
 			client.setScreen(null);
+			return true;
+		}
+		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+			textField.calculate(textField.getText());
 			return true;
 		}
 		return super.keyPressed(keyCode, scanCode, modifiers);
