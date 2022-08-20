@@ -6,6 +6,7 @@ import blue.endless.jankson.JsonObject;
 import com.mojang.blaze3d.platform.InputUtil;
 import de.arbeeco.minecalc.client.gui.hud.CalcHud;
 import de.arbeeco.minecalc.config.Config;
+import de.arbeeco.minecalc.registries.MinecalcKeybinds;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
@@ -22,28 +23,27 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
+import static de.arbeeco.minecalc.registries.MinecalcKeybinds.keyBindingR;
+
 public class MinecalcClient implements ClientModInitializer {
 	public static final Logger logger = LogManager.getLogger();
 	public static volatile Config config;
-	public static KeyBind keyBinding;
-
+	public static CalcHud calcHud;
 	public static final Jankson jankson = Jankson.builder().build();
+
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		calcHud = new CalcHud(MinecraftClient.getInstance());
+		calcHud.init();
 		config = loadConfig();
+		MinecalcKeybinds.setupKeybinds();
 		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
-			new CalcHud(MinecraftClient.getInstance()).init(matrixStack, deltaTick);
+			calcHud.render(matrixStack, deltaTick);
 		});
-		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBind(
-				"key.minecalc.opencalc",
-				InputUtil.Type.KEYSYM,
-				GLFW.GLFW_KEY_R,
-				"category.minecalc.keycategory"
-		));
 		ClientTickEvents.END.register(client -> {
-			while (keyBinding.wasPressed()) {
+			while (keyBindingR.wasPressed()) {
 				if(client.currentScreen == null) {
-					client.setScreen(new CalcHud(client));
+					client.setScreen(calcHud);
 				} else {
 					client.setScreen(null);
 				}
