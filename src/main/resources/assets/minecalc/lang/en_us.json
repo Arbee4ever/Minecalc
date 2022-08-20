@@ -18,5 +18,9 @@
   "gui.minecalc.6": "6",
   "gui.minecalc.7": "7",
   "gui.minecalc.8": "8",
-  "gui.minecalc.9": "9"
+  "gui.minecalc.9": "9",
+  "gui.minecalc.x": "x",
+  "gui.minecalc.y": "y",
+  "gui.minecalc.z": "z",
+  "gui.minecalc.⎘": "⎘"
 }
