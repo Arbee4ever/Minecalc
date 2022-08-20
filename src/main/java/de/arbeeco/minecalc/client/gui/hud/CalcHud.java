@@ -1,4 +1,4 @@
-package de.arbeeco.minecalc.client.gui.renderer;
+package de.arbeeco.minecalc.client.gui.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.MinecalcClient;
@@ -11,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 public class CalcHud extends Screen {
 	private final MinecraftClient client;
@@ -48,6 +49,7 @@ public class CalcHud extends Screen {
 				scaledWidth = client.getWindow().getScaledWidth();
 				scaledHeight = client.getWindow().getScaledHeight();
 				textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.translatable("test")));
+				textField.setMaxLength(2147483647);
 
 				textField.render(matrices, (int)getX(), (int)getY(), tickDelta);
 
@@ -98,7 +100,8 @@ public class CalcHud extends Screen {
 			}
 			default -> {
 				button = new ButtonWidget(y, x, 20, 20, Text.translatable("gui.minecalc." + calc[i]), (button1) -> {
-					textField.setText(textField.getText() + calc[i]);
+					System.out.print("test");
+					textField.setText("test");
 				});
 			}
 		}
@@ -114,14 +117,14 @@ public class CalcHud extends Screen {
 		if(client.mouse.isCursorLocked()) {
 			return 0;
 		}
-		return client.mouse.getX();
+		return (int)(this.client.mouse.getX() * this.client.getWindow().getScaledWidth() / (double)this.client.getWindow().getWidth());
 	}
 
 	private double getY() {
 		if(client.mouse.isCursorLocked()) {
 			return 0;
 		}
-		return client.mouse.getY();
+		return (int)(this.client.mouse.getY() * this.client.getWindow().getScaledHeight() / (double)this.client.getWindow().getHeight());
 	}
 
 	@Override
@@ -133,5 +136,18 @@ public class CalcHud extends Screen {
 	@Override
 	public boolean isPauseScreen() {
 		return false;
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (keyCode == MinecalcClient.keyBinding.getDefaultKey().getKeyCode()) {
+			client.setScreen(null);
+			return true;
+		}
+		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			client.setScreen(null);
+			return true;
+		}
+		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 }
