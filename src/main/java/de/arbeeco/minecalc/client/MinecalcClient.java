@@ -4,7 +4,7 @@ import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import com.mojang.blaze3d.platform.InputUtil;
-import de.arbeeco.minecalc.client.gui.renderer.CalcHud;
+import de.arbeeco.minecalc.client.gui.hud.CalcHud;
 import de.arbeeco.minecalc.config.Config;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -25,15 +25,16 @@ import java.nio.charset.StandardCharsets;
 public class MinecalcClient implements ClientModInitializer {
 	public static final Logger logger = LogManager.getLogger();
 	public static volatile Config config;
+	public static KeyBind keyBinding;
 
 	public static final Jankson jankson = Jankson.builder().build();
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		config = loadConfig();
 		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
 			new CalcHud(MinecraftClient.getInstance()).init(matrixStack, deltaTick);
 		});
-		config = loadConfig();
-		KeyBind keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBind(
+		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBind(
 				"key.minecalc.opencalc",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,
@@ -41,10 +42,10 @@ public class MinecalcClient implements ClientModInitializer {
 		));
 		ClientTickEvents.END.register(client -> {
 			while (keyBinding.wasPressed()) {
-				if (client.mouse.isCursorLocked()) {
-					client.mouse.unlockCursor();
+				if(client.currentScreen == null) {
+					client.setScreen(new CalcHud(client));
 				} else {
-					client.mouse.lockCursor();
+					client.setScreen(null);
 				}
 			}
 		});
