@@ -3,6 +3,7 @@ package de.arbeeco.minecalc.client.gui.hud;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
+import de.arbeeco.minecalc.registries.MinecalcKeybinds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -16,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 public class CalcHud extends Screen {
 	private final MinecraftClient client;
 	private static final Identifier TEXTURE = new Identifier("minecalc", "textures/gui/calculator.png");
-	private static ATextField textField;
+	public static ATextField textField;
 	private int scaledWidth;
 	private int scaledHeight;
 	String[] calc = {
@@ -30,31 +31,31 @@ public class CalcHud extends Screen {
 	public CalcHud(MinecraftClient minecraftClient) {
 		super(Text.translatable("gui.minecalc.calculator"));
 		client = minecraftClient;
-		isPauseScreen();
 	}
 
-	public void render(MatrixStack matrices, float tickDelta) {
+	public void init() {
 		PlayerEntity playerEntity = this.getCameraPlayer();
 		if (playerEntity != null) {
-			if (MinecalcClient.config.showCalculator) {
-				renderCalculator(matrices);
-			}
+			scaledWidth = client.getWindow().getScaledWidth();
+			scaledHeight = client.getWindow().getScaledHeight();
+			textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.translatable("test")));
+			super.init();
 		}
 	}
 
-	public void init(MatrixStack matrices, float tickDelta) {
+	public void render(MatrixStack matrices, float tickDelta) {
+		init();
 		PlayerEntity playerEntity = this.getCameraPlayer();
 		if (playerEntity != null) {
-			if (MinecalcClient.config.showCalculator) {
-				scaledWidth = client.getWindow().getScaledWidth();
-				scaledHeight = client.getWindow().getScaledHeight();
-				textField = addSelectableChild(new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.translatable("test")));
-				textField.setMaxLength(2147483647);
+			if (textField != null) {
+				if (MinecalcClient.config.showCalculator) {
+					renderCalculator(matrices);
 
-				textField.render(matrices, (int)getX(), (int)getY(), tickDelta);
+					textField.render(matrices, (int) getX(), (int) getY(), tickDelta);
 
-				for (int i = 0; i < calc.length; i++) {
-					addButton(i).render(matrices, (int)getX(), (int)getY(), tickDelta);
+					for (int i = 0; i < calc.length; i++) {
+						addButton(i).render(matrices, (int) getX(), (int) getY(), tickDelta);
+					}
 				}
 			}
 		}
@@ -90,7 +91,9 @@ public class CalcHud extends Screen {
 			}
 			case 18 -> {
 				button = new ButtonWidget(y, x, 20, 20, Text.translatable("gui.minecalc." + calc[i]), (button1) -> {
-					textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
+					if (textField.getText().length() > 0) {
+						textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
+					}
 				});
 			}
 			case 19-> {
@@ -100,8 +103,7 @@ public class CalcHud extends Screen {
 			}
 			default -> {
 				button = new ButtonWidget(y, x, 20, 20, Text.translatable("gui.minecalc." + calc[i]), (button1) -> {
-					System.out.print("test");
-					textField.setText("test");
+					textField.setText(textField.getText() + calc[i]);
 				});
 			}
 		}
@@ -134,13 +136,18 @@ public class CalcHud extends Screen {
 	}
 
 	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
 	public boolean isPauseScreen() {
 		return false;
 	}
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == MinecalcClient.keyBinding.getDefaultKey().getKeyCode()) {
+		if (keyCode == MinecalcKeybinds.keyBindingR.getDefaultKey().getKeyCode()) {
 			client.setScreen(null);
 			return true;
 		}
