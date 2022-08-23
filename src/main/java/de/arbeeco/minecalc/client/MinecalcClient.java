@@ -3,17 +3,13 @@ package de.arbeeco.minecalc.client;
 import blue.endless.jankson.Jankson;
 import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
-import com.mojang.blaze3d.platform.InputUtil;
-import de.arbeeco.minecalc.client.gui.hud.CalcHud;
+import de.arbeeco.minecalc.client.gui.screen.CalcScreen;
 import de.arbeeco.minecalc.config.Config;
 import de.arbeeco.minecalc.registries.MinecalcKeybinds;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBind;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.glfw.GLFW;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
@@ -28,13 +24,12 @@ import static de.arbeeco.minecalc.registries.MinecalcKeybinds.keyBindingR;
 public class MinecalcClient implements ClientModInitializer {
 	public static final Logger logger = LogManager.getLogger();
 	public static volatile Config config;
-	public static CalcHud calcHud;
+	public static CalcScreen calcHud;
 	public static final Jankson jankson = Jankson.builder().build();
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		calcHud = new CalcHud(MinecraftClient.getInstance());
-		calcHud.init();
+		calcHud = new CalcScreen(MinecraftClient.getInstance());
 		config = loadConfig();
 		MinecalcKeybinds.setupKeybinds();
 		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
