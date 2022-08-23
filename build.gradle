@@ -102,6 +102,7 @@ modrinth {
 	versionName = "[QUILT]" + project.name + "-${version}"
 	versionType = "alpha"
 	uploadFile = remapJar
-	gameVersions = ["1.19"]
+	gameVersions = ["1.19", "1.19.1", "1.19.2"]
 	loaders = ["quilt"]
+	changelog = project.file("CHANGELOG.md").text
 }
