@@ -8,7 +8,7 @@
   "gui.minecalc.+": "+",
   "gui.minecalc.=": "=",
   "gui.minecalc.«": "«",
-  "gui.minecalc..": ".",
+  "gui.minecalc.,": ",",
   "gui.minecalc.0": "0",
   "gui.minecalc.1": "1",
   "gui.minecalc.2": "2",
@@ -22,5 +22,8 @@
   "gui.minecalc.x": "x",
   "gui.minecalc.y": "y",
   "gui.minecalc.z": "z",
-  "gui.minecalc.⎘": "⎘"
+  "gui.minecalc.⎘": "⎘",
+  "gui.minecalc.☰": "☰",
+  "gui.minecalc.wip": "This is WIP, check back in a later Update to see what this is about.",
+  "key.minecalc.opencalc": "Use Calculator"
 }
