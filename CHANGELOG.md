@@ -1,0 +1,3 @@
+-cleaned the code up</br>
+-fixed a bug where the calculator buttons would be added to the Screen again and again</br>
+-added translation string for "category.minecalc.keycategory"</br>

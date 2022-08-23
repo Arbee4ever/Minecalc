@@ -2,7 +2,6 @@ package de.arbeeco.minecalc.registries;
 
 import com.mojang.blaze3d.platform.InputUtil;
 import de.arbeeco.minecalc.client.MinecalcClient;
-import de.arbeeco.minecalc.client.gui.hud.CalcHud;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBind;
 import org.lwjgl.glfw.GLFW;
@@ -23,7 +22,8 @@ public class MinecalcKeybinds {
 	public static void registerClientTickEvents() {
 		ClientTickEvents.END.register(client -> {
 			while (keyBindingR.wasPressed()) {
-				if(client.currentScreen == null) {
+				if (!MinecalcClient.config.showCalculator) return;
+				if (client.currentScreen == null) {
 					client.setScreen(MinecalcClient.calcHud);
 				} else {
 					client.setScreen(null);
