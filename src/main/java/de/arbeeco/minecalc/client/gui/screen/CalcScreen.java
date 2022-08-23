@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -19,6 +20,7 @@ public class CalcScreen extends Screen {
 	public static ATextField textField;
 	private int scaledWidth;
 	private int scaledHeight;
+	public boolean isInit = false;
 	int count = 0;
 	static String[] calc = {
 			"AC", "(", ")", "/",
@@ -42,24 +44,23 @@ public class CalcScreen extends Screen {
 	}
 
 	public void init() {
-		if (textField == null) {
-			PlayerEntity playerEntity = this.getCameraPlayer();
-			if (playerEntity != null) {
-				scaledWidth = client.getWindow().getScaledWidth();
-				scaledHeight = client.getWindow().getScaledHeight();
-				textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.literal(""));
-				for (int i = 0; i < calc.length; i++) {
-					addButton(calc, i);
-				}
-				for (int i = 0; i < calcUtil.length; i++) {
-					int x = scaledHeight - 25 - 20 * (calcUtil.length - i - 1);
-					int y = scaledWidth - 30 - 20 * 4;
-					addButton(calcUtil, i);
-				}
-				addSelectableChild(textField);
-				setInitialFocus(textField);
-				super.init();
+		clearChildren();
+		setFocused(null);
+		PlayerEntity playerEntity = this.getCameraPlayer();
+		if (playerEntity != null) {
+			scaledWidth = client.getWindow().getScaledWidth();
+			scaledHeight = client.getWindow().getScaledHeight();
+			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.literal(""));
+			for (int i = 0; i < calc.length; i++) {
+				addButton(calc, i);
 			}
+			for (int i = 0; i < calcUtil.length; i++) {
+				addButton(calcUtil, i);
+			}
+			addSelectableChild(textField);
+			setInitialFocus(textField);
+			isInit = true;
+			super.init();
 		}
 	}
 
@@ -76,8 +77,6 @@ public class CalcScreen extends Screen {
 						button.render(matrices, (int) getX(), (int) getY(), tickDelta);
 					}
 				}
-			} else {
-				init();
 			}
 		}
 	}
@@ -101,6 +100,9 @@ public class CalcScreen extends Screen {
 	}
 
 	private ButtonWidget addButton(String[] in, int index) {
+		if (count == calc.length + calcUtil.length) {
+			count = 0;
+		}
 		ButtonWidget button;
 		int x = scaledHeight - 25 - (calc.length - index - 1) / 4 * 20;
 		int y = scaledWidth - 25 - (calc.length - index - 1) % 4 * 20;
@@ -123,7 +125,7 @@ public class CalcScreen extends Screen {
 				});
 			}
 			case "⎘", "☰", "x", "y", "z" -> {
-				x = scaledHeight - 25 - 20 * (calcUtil.length - index);
+				x = scaledHeight - 25 - 20 * (calcUtil.length - index - 1);
 				y = scaledWidth - 30 - 20 * 4;
 				switch (in[index]) {
 					case "⎘" -> {
@@ -138,7 +140,7 @@ public class CalcScreen extends Screen {
 							MinecraftClient.getInstance().setScreen(new CalcUtilityScreen(Text.translatable("gui.minecalc.calcmenu")));
 						});
 					}
-					case "x", "y", "z" -> {
+					default -> {
 						button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
 							textField.setText(textField.getText() + getCoord(in[index]));
 						});
