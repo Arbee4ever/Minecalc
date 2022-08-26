@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
-public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> implements RecipeBookProvider {
+public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> {
 	private static final Identifier CALCULATOR_BUTTON_TEXTURE = new Identifier("minecalc", "textures/gui/calculator_button.png");
 
 	public InventoryScreenMixin(PlayerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
