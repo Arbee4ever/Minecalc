@@ -1,12 +1,9 @@
 package de.arbeeco.minecalc.client.gui.widget;
 
-import de.arbeeco.minecalc.client.gui.screen.CalcScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.MutableText;
 import org.mariuszgromada.math.mxparser.Expression;
-
-import java.util.Arrays;
 
 public class ATextField extends TextFieldWidget {
 
