@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
-public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> {
+public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> implements RecipeBookProvider {
 	@Shadow
 	@Final
 	private RecipeBookWidget recipeBook;
