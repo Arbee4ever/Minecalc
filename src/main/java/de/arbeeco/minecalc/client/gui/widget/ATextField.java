@@ -1,10 +1,8 @@
 package de.arbeeco.minecalc.client.gui.widget;
 
-import io.github.cottonmc.cotton.gui.widget.WTextField;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.MutableText;
-import org.lwjgl.glfw.GLFW;
 import org.mariuszgromada.math.mxparser.Expression;
 
 public class ATextField extends TextFieldWidget {
@@ -17,8 +15,5 @@ public class ATextField extends TextFieldWidget {
 		setText(in.split("=")[0]);
 		Expression eq = new Expression(getText());
 		setText(eq.getExpressionString() + "=" + eq.calculate());
-		if(getText().endsWith(".0")) {
-			setText(getText().substring(0, getText().length() - 2));
-		}
 	}
 }

@@ -1,6 +1,7 @@
 plugins {
 	id 'maven-publish'
 	alias(libs.plugins.quilt.loom)
+	id "com.modrinth.minotaur" version "2.4.2"
 }
 
 archivesBaseName = project.archives_base_name
@@ -32,13 +33,10 @@ dependencies {
 		// officialMojangMappings() // Uncomment if you want to use Mojang mappings as your primary mappings, falling back on QM for parameters and Javadocs
 	}
 	modImplementation libs.quilt.loader
-	modImplementation include("io.github.cottonmc:LibGui:6.0.0+1.19")
 
-	implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
+	include(implementation 'blue.endless:jankson:1.1.1')
 
-	modApi("me.shedaniel.cloth:cloth-config-fabric:8.0.75") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	include(implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6')
 
 	// QSL is not a complete API; You will need Quilted Fabric API to fill in the gaps.
 	// Quilted Fabric API will automatically pull in the correct QSL version.
@@ -95,5 +93,17 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+	}
+}
+
+modrinth {
+	projectId = System.getenv("projectid")
+	versionName = "[QUILT]" + project.name + "-${version}"
+	versionType = "alpha"
+	uploadFile = remapJar
+	gameVersions = ["1.19", "1.19.1", "1.19.2"]
+	changelog = project.file("CHANGELOG.md").text
+	dependencies {
+		required.project "qsl"
 	}
 }
