@@ -1,12 +1,8 @@
 package de.arbeeco.minecalc.mixin;
 
 import de.arbeeco.minecalc.client.MinecalcClient;
-import de.arbeeco.minecalc.client.gui.hud.CalcHud;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;

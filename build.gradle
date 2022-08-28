@@ -97,6 +97,7 @@ publishing {
 }
 
 modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
 	projectId = System.getenv("projectid")
 	versionName = "[QUILT]" + project.name + "-${version}"
 	versionType = "alpha"
