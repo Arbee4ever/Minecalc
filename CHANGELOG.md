@@ -1,1 +1,1 @@
-- fixing incompatibility with other mods
+- fix button not moving when Recipe Book is opened
