@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class CalcUtilityScreen extends Screen {
@@ -21,7 +22,7 @@ public class CalcUtilityScreen extends Screen {
 		renderBackground(matrices);
 		scaledWidth = client.getWindow().getScaledWidth();
 		scaledHeight = client.getWindow().getScaledHeight();
-		Text orderedText = Text.translatable("gui.minecalc.wip");
+		Text orderedText = new TranslatableText("gui.minecalc.wip");
 		textRenderer.drawWithShadow(matrices, orderedText, (float)(scaledWidth/2 - textRenderer.getWidth(orderedText) / 2), (float)scaledHeight/2-5, 16777215);
 		super.render(matrices, mouseX, mouseY, delta);
 	}
