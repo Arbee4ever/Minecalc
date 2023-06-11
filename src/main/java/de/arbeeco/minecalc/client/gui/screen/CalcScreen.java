@@ -23,18 +23,18 @@ public class CalcScreen extends Screen {
 	public boolean isInit = false;
 	int count = 0;
 	static String[] calc = {
-			"AC", "(", ")", "/",
-			"7", "8", "9", "*",
-			"4", "5", "6", "-",
-			"1", "2", "3", "+",
-			"0", ",", "«", "="
+		"AC", "(", ")", "/",
+		"7", "8", "9", "*",
+		"4", "5", "6", "-",
+		"1", "2", "3", "+",
+		"0", ",", "«", "="
 	};
 	static String[] calcUtil = {
-			"x",
-			"y",
-			"z",
-			"⎘",
-			"☰"
+		"x",
+		"y",
+		"z",
+		"⎘",
+		"☰"
 	};
 	public static ButtonWidget[] buttons = new ButtonWidget[calc.length + calcUtil.length];
 
@@ -45,7 +45,7 @@ public class CalcScreen extends Screen {
 
 	public void init() {
 		clearChildren();
-		setFocused(null);
+		setFocused(false);
 		PlayerEntity playerEntity = this.getCameraPlayer();
 		if (playerEntity != null) {
 			scaledWidth = client.getWindow().getScaledWidth();
@@ -58,7 +58,7 @@ public class CalcScreen extends Screen {
 				addButton(calcUtil, i);
 			}
 			addSelectableChild(textField);
-			setInitialFocus(textField);
+			setFocusedChild(textField);
 			isInit = true;
 			super.init();
 		}
@@ -70,9 +70,7 @@ public class CalcScreen extends Screen {
 			if (textField != null && buttons != null) {
 				if (MinecalcClient.config.showCalculator) {
 					renderCalculator(matrices);
-
 					textField.render(matrices, (int) getX(), (int) getY(), tickDelta);
-
 					for (ButtonWidget button : buttons) {
 						button.render(matrices, (int) getX(), (int) getY(), tickDelta);
 					}
@@ -92,11 +90,7 @@ public class CalcScreen extends Screen {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, TEXTURE);
-		int j = this.getZOffset();
-		this.setZOffset(-90);
-		this.drawTexture(matrixStack, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
-
-		this.setZOffset(j);
+		drawTexture(matrixStack, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
 	}
 
 	private ButtonWidget addButton(String[] in, int index) {
@@ -104,40 +98,54 @@ public class CalcScreen extends Screen {
 			count = 0;
 		}
 		ButtonWidget button;
-		int x = scaledHeight - 25 - (calc.length - index - 1) / 4 * 20;
-		int y = scaledWidth - 25 - (calc.length - index - 1) % 4 * 20;
+		int y = scaledHeight - 25 - (calc.length - index - 1) / 4 * 20;
+		int x = scaledWidth - 25 - (calc.length - index - 1) % 4 * 20;
 		switch (in[index]) {
-			case "AC" -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-				textField.setText("");
-			});
-			case "«" -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-				if (textField.getText().length() > 0) {
-					textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
-				}
-			});
-			case "=" -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-				textField.calculate(textField.getText());
-			});
+			case "AC" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					textField.setText("");
+				})
+				.positionAndSize(x, y, 20, 20)
+				.build();
+			case "«" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					if (textField.getText().length() > 0) {
+						textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
+					}
+				})
+				.positionAndSize(x, y, 20, 20)
+				.build();
+			case "=" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					textField.calculate(textField.getText());
+				})
+				.positionAndSize(x, y, 20, 20)
+				.build();
 			case "⎘", "☰", "x", "y", "z" -> {
-				x = scaledHeight - 25 - 20 * (calcUtil.length - index - 1);
-				y = scaledWidth - 30 - 20 * 4;
+				y = scaledHeight - 25 - 20 * (calcUtil.length - index - 1);
+				x = scaledWidth - 30 - 20 * 4;
 				switch (in[index]) {
-					case "⎘" -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-						if (textField.getText().contains(buttons[19].getMessage().getString())) {
-							MinecraftClient.getInstance().keyboard.setClipboard(textField.getText().split(buttons[19].getMessage().getString())[1]);
-						}
-					});
-					case "☰" -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-						MinecraftClient.getInstance().setScreen(new CalcUtilityScreen(Text.translatable("gui.minecalc.calcmenu")));
-					});
-					default -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-						textField.setText(textField.getText() + getCoord(in[index]));
-					});
+					case "⎘" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+							if (textField.getText().contains(buttons[19].getMessage().getString())) {
+								MinecraftClient.getInstance().keyboard.setClipboard(textField.getText().split(buttons[19].getMessage().getString())[1]);
+							}
+						})
+						.positionAndSize(x, y, 20, 20)
+						.build();
+					case "☰" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+							MinecraftClient.getInstance().setScreen(new CalcUtilityScreen(Text.translatable("gui.minecalc.calcmenu")));
+						})
+						.positionAndSize(x, y, 20, 20)
+						.build();
+					default -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+							textField.setText(textField.getText() + getCoord(in[index]));
+						})
+						.positionAndSize(x, y, 20, 20)
+						.build();
 				}
 			}
-			default -> button = new ButtonWidget(y, x, 20, 20, Text.literal(in[index]), (button1) -> {
-				textField.setText(textField.getText() + button1.getMessage().getString());
-			});
+			default -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					textField.setText(textField.getText() + button1.getMessage().getString());
+				})
+				.positionAndSize(x, y, 20, 20)
+				.build();
 		}
 		buttons[count] = button;
 		count++;
@@ -146,21 +154,21 @@ public class CalcScreen extends Screen {
 	}
 
 	private PlayerEntity getCameraPlayer() {
-		return !(client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity)client.getCameraEntity();
+		return !(client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity) client.getCameraEntity();
 	}
 
 	private double getX() {
-		if(client.mouse.isCursorLocked()) {
+		if (client.mouse.isCursorLocked()) {
 			return 0;
 		}
-		return (int)(this.client.mouse.getX() * this.client.getWindow().getScaledWidth() / (double)this.client.getWindow().getWidth());
+		return (int) (this.client.mouse.getX() * this.client.getWindow().getScaledWidth() / (double) this.client.getWindow().getWidth());
 	}
 
 	private double getY() {
-		if(client.mouse.isCursorLocked()) {
+		if (client.mouse.isCursorLocked()) {
 			return 0;
 		}
-		return (int)(this.client.mouse.getY() * this.client.getWindow().getScaledHeight() / (double)this.client.getWindow().getHeight());
+		return (int) (this.client.mouse.getY() * this.client.getWindow().getScaledHeight() / (double) this.client.getWindow().getHeight());
 	}
 
 	private int getCoord(String axis) {

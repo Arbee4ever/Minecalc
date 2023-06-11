@@ -1,1 +1,1 @@
-- fix button not moving when Recipe Book is opened
+- updated to 1.19.4
