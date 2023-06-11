@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mariuszgromada.math.mxparser.License;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
@@ -29,6 +30,7 @@ public class MinecalcClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
+		License.iConfirmNonCommercialUse("Arbee");
 		calcHud = new CalcScreen(MinecraftClient.getInstance());
 		config = loadConfig();
 		MinecalcKeybinds.setupKeybinds();
