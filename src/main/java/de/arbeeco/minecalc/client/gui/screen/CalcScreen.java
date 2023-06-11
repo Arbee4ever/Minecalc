@@ -5,6 +5,7 @@ import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -64,15 +65,15 @@ public class CalcScreen extends Screen {
 		}
 	}
 
-	public void render(MatrixStack matrices, float tickDelta) {
+	public void render(GuiGraphics graphics, float tickDelta) {
 		PlayerEntity playerEntity = this.getCameraPlayer();
 		if (playerEntity != null) {
 			if (textField != null && buttons != null) {
 				if (MinecalcClient.config.showCalculator) {
-					renderCalculator(matrices);
-					textField.render(matrices, (int) getX(), (int) getY(), tickDelta);
+					renderCalculator(graphics);
+					textField.render(graphics, (int) getX(), (int) getY(), tickDelta);
 					for (ButtonWidget button : buttons) {
-						button.render(matrices, (int) getX(), (int) getY(), tickDelta);
+						button.render(graphics, (int) getX(), (int) getY(), tickDelta);
 					}
 				}
 			}
@@ -84,13 +85,13 @@ public class CalcScreen extends Screen {
 		textField.tick();
 	}
 
-	private void renderCalculator(MatrixStack matrixStack) {
+	private void renderCalculator(GuiGraphics graphics) {
 		scaledWidth = client.getWindow().getScaledWidth();
 		scaledHeight = client.getWindow().getScaledHeight();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, TEXTURE);
-		drawTexture(matrixStack, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
+		graphics.drawTexture(TEXTURE, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
 	}
 
 	private ButtonWidget addButton(String[] in, int index) {

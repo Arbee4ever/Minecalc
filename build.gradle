@@ -9,11 +9,7 @@ version = project.version
 group = project.maven_group
 
 repositories {
-	maven { url "https://maven.shedaniel.me/" }
-	maven {
-		name = "CottonMC"
-		url = "https://server.bbkr.space/artifactory/libs-release"
-	}
+
 }
 
 repositories {
@@ -96,7 +92,7 @@ modrinth {
 	versionName = "[QUILT]" + project.name + "-${version}"
 	versionType = "alpha"
 	uploadFile = remapJar
-	gameVersions = ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4"]
+	gameVersions = ["1.20"]
 	changelog = project.file("CHANGELOG.md").text
 	dependencies {
 		required.project "qsl"
