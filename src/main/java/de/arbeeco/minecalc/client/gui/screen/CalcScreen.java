@@ -169,7 +169,7 @@ public class CalcScreen extends Screen {
 	}
 
 	@Override
-	public void onClose() {
+	public void close() {
 		MinecalcClient.config.showCalculator = !MinecalcClient.config.showCalculator;
 	}
 
@@ -179,7 +179,7 @@ public class CalcScreen extends Screen {
 	}
 
 	@Override
-	public boolean isPauseScreen() {
+	public boolean shouldPause() {
 		return false;
 	}
 

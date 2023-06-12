@@ -1,16 +1,16 @@
 package de.arbeeco.minecalc.registries;
 
-import com.mojang.blaze3d.platform.InputUtil;
 import de.arbeeco.minecalc.client.MinecalcClient;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBind;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 public class MinecalcKeybinds {
-	public static KeyBind keyBindingR;
+	public static KeyBinding keyBindingR;
 	public static void setupKeybinds() {
-		keyBindingR = KeyBindingHelper.registerKeyBinding(new KeyBind(
+		keyBindingR = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.minecalc.opencalc",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,
@@ -20,7 +20,7 @@ public class MinecalcKeybinds {
 	}
 
 	public static void registerClientTickEvents() {
-		ClientTickEvents.END.register(client -> {
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (keyBindingR.wasPressed()) {
 				if (!MinecalcClient.config.showCalculator) return;
 				if (client.currentScreen == null) {

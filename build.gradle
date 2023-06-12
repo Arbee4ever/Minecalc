@@ -1,6 +1,6 @@
 plugins {
 	id 'maven-publish'
-	id 'org.quiltmc.loom' version '1.+' // Required for the loader to work.
+	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id "com.modrinth.minotaur" version "2.+"
 }
 
@@ -27,21 +27,20 @@ repositories {
 // See https://docs.gradle.org/current/userguide/platforms.html for information on how version catalogs work.
 dependencies {
 	minecraft "com.mojang:minecraft:${minecraft_version}"
-	mappings "org.quiltmc:quilt-mappings:${minecraft_version}+build.${quilt_mappings}:intermediary-v2"
-	modImplementation "org.quiltmc:quilt-loader:${loader_version}"
+	mappings "net.fabricmc:yarn:${minecraft_version}+build.${yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
 	include(implementation "blue.endless:jankson:${jankson}")
 
 	include(implementation "org.mariuszgromada.math:MathParser.org-mXparser:${mxparser}")
 
-	// Quilted Fabric API will automatically pull in the correct QSL version.
-	modImplementation "org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}+${minecraft_version}"
 }
 
 processResources {
 	inputs.property "version", version
 
-	filesMatching('quilt.mod.json') {
+	filesMatching('fabric.mod.json') {
 		expand "version": version
 	}
 }
@@ -93,12 +92,12 @@ publishing {
 modrinth {
 	token = System.getenv("MODRINTH_TOKEN")
 	projectId = System.getenv("projectid")
-	versionName = "[QUILT]" + project.name + "-${version}"
+	versionName = "[FABRIC]" + project.name + "-${version}+${minecraft_version}"
 	versionType = "alpha"
 	uploadFile = remapJar
 	gameVersions = ["1.18.2"]
 	changelog = project.file("CHANGELOG.md").text
 	dependencies {
-		required.project "qsl"
+		required.project "fabric-api"
 	}
 }
