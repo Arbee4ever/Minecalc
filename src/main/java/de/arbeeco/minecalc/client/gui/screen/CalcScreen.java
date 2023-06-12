@@ -4,15 +4,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,7 +38,7 @@ public class CalcScreen extends Screen {
 	public static ButtonWidget[] buttons = new ButtonWidget[calc.length + calcUtil.length];
 
 	public CalcScreen(MinecraftClient minecraftClient) {
-		super(new TranslatableText("gui.minecalc.calculator"));
+		super(Text.translatable("gui.minecalc.calculator"));
 		client = minecraftClient;
 	}
 
@@ -52,7 +49,7 @@ public class CalcScreen extends Screen {
 		if (playerEntity != null) {
 			scaledWidth = client.getWindow().getScaledWidth();
 			scaledHeight = client.getWindow().getScaledHeight();
-			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, new LiteralText(""));
+			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.literal(""));
 			for (int i = 0; i < calc.length; i++) {
 				addButton(calc, i);
 			}
@@ -90,7 +87,7 @@ public class CalcScreen extends Screen {
 		scaledWidth = client.getWindow().getScaledWidth();
 		scaledHeight = client.getWindow().getScaledHeight();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, TEXTURE);
 		drawTexture(matrixStack, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
 	}
@@ -103,37 +100,51 @@ public class CalcScreen extends Screen {
 		int y = scaledHeight - 25 - (calc.length - index - 1) / 4 * 20;
 		int x = scaledWidth - 25 - (calc.length - index - 1) % 4 * 20;
 		switch (in[index]) {
-			case "AC" -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-				textField.setText("");
-			});
-			case "«" -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-				if (textField.getText().length() > 0) {
-					textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
-				}
-			});
-			case "=" -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-				textField.calculate(textField.getText());
-			});
+			case "AC" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					textField.setText("");
+				})
+				.dimensions(x, y, 20, 20)
+				.build();
+			case "«" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					if (textField.getText().length() > 0) {
+						textField.setText(textField.getText().substring(0, textField.getText().length() - 1));
+					}
+				})
+				.dimensions(x, y, 20, 20)
+				.build();
+			case "=" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					textField.calculate(textField.getText());
+				})
+				.dimensions(x, y, 20, 20)
+				.build();
 			case "⎘", "☰", "x", "y", "z" -> {
 				y = scaledHeight - 25 - 20 * (calcUtil.length - index - 1);
 				x = scaledWidth - 30 - 20 * 4;
 				switch (in[index]) {
-					case "⎘" -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-						if (textField.getText().contains(buttons[19].getMessage().getString())) {
-							MinecraftClient.getInstance().keyboard.setClipboard(textField.getText().split(buttons[19].getMessage().getString())[1]);
-						}
-					});
-					case "☰" -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-						MinecraftClient.getInstance().setScreen(new CalcUtilityScreen(new TranslatableText("gui.minecalc.calcmenu")));
-					});
-					default -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-						textField.setText(textField.getText() + getCoord(in[index]));
-					});
+					case "⎘" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+							if (textField.getText().contains(buttons[19].getMessage().getString())) {
+								MinecraftClient.getInstance().keyboard.setClipboard(textField.getText().split(buttons[19].getMessage().getString())[1]);
+							}
+						})
+						.dimensions(x, y, 20, 20)
+						.build();
+					case "☰" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+							MinecraftClient.getInstance().setScreen(new CalcUtilityScreen(Text.translatable("gui.minecalc.calcmenu")));
+						})
+						.dimensions(x, y, 20, 20)
+						.build();
+					default -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+							textField.setText(textField.getText() + getCoord(in[index]));
+						})
+						.dimensions(x, y, 20, 20)
+						.build();
 				}
 			}
-			default -> button = new ButtonWidget(x, y, 20, 20, new LiteralText(in[index]), (button1) -> {
-				textField.setText(textField.getText() + button1.getMessage().getString());
-			});
+			default -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
+					textField.setText(textField.getText() + button1.getMessage().getString());
+				})
+				.dimensions(x, y, 20, 20)
+				.build();
 		}
 		buttons[count] = button;
 		count++;

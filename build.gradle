@@ -95,7 +95,7 @@ modrinth {
 	versionName = "[FABRIC]" + project.name + "-${version}+${minecraft_version}"
 	versionType = "alpha"
 	uploadFile = remapJar
-	gameVersions = [${minecraft_version}]
+	gameVersions = ["${minecraft_version}"]
 	changelog = project.file("CHANGELOG.md").text
 	dependencies {
 		required.project "fabric-api"
