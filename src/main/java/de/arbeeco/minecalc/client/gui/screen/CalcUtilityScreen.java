@@ -1,6 +1,8 @@
 package de.arbeeco.minecalc.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,23 +19,20 @@ public class CalcUtilityScreen extends Screen {
 	}
 
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		renderBackground(matrices);
+	public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+		renderBackground(drawContext);
 		scaledWidth = client.getWindow().getScaledWidth();
 		scaledHeight = client.getWindow().getScaledHeight();
 		Text orderedText = Text.translatable("gui.minecalc.wip");
-		textRenderer.drawWithShadow(matrices, orderedText, (float)(scaledWidth/2 - textRenderer.getWidth(orderedText) / 2), (float)scaledHeight/2-5, 16777215);
-		super.render(matrices, mouseX, mouseY, delta);
+		textRenderer.draw(orderedText, (float)(scaledWidth/2 - textRenderer.getWidth(orderedText) / 2), (float)scaledHeight/2-5, 16777215, true, drawContext.getMatrices().peek().getPositionMatrix(), drawContext.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 255);
+		super.render(drawContext, mouseX, mouseY, delta);
 	}
 
 	@Override
-	public void renderBackground(MatrixStack matrices) {
-		super.renderBackground(matrices);
-		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
+	public void renderBackground(DrawContext drawContext) {
+		super.renderBackground(drawContext);
 		int width = 360;
 		int height = 175;
-		drawTexture(matrices, scaledWidth/2-width/2, scaledHeight/2-height/2, 0, 0, width, height, 360, 360);
+		drawContext.drawTexture(BACKGROUND_TEXTURE, scaledWidth/2-width/2, scaledHeight/2-height/2, 0, 0, width, height, 360, 360);
 	}
 }
