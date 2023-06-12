@@ -1,3 +1,5 @@
-![Created for ModFest: Singularity](https://cdn.discordapp.com/attachments/634061748105904131/1089027708371079229/cozy_64h.png)
+[![quilt](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/quilt_vector.svg)](https://modrinth.com/mod/qsl)
+[![fabric](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_vector.svg)](https://modrinth.com/mod/fabric-api)
+[![discord-singular](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://arbeeco.de/links/discord)
 
 This mod was made for ModFest: Singularity. It adds a Calculator ingame, to make calculations you may need to do easy and fast.
