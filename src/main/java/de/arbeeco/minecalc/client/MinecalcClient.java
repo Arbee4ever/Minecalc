@@ -6,15 +6,14 @@ import blue.endless.jankson.JsonObject;
 import de.arbeeco.minecalc.client.gui.screen.CalcScreen;
 import de.arbeeco.minecalc.config.Config;
 import de.arbeeco.minecalc.registries.MinecalcKeybinds;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mariuszgromada.math.mxparser.License;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +28,7 @@ public class MinecalcClient implements ClientModInitializer {
 	public static final Jankson jankson = Jankson.builder().build();
 
 	@Override
-	public void onInitializeClient(ModContainer mod) {
+	public void onInitializeClient() {
 		License.iConfirmNonCommercialUse("Arbee");
 		calcHud = new CalcScreen(MinecraftClient.getInstance());
 		config = loadConfig();
@@ -38,7 +37,7 @@ public class MinecalcClient implements ClientModInitializer {
 			if (!calcHud.isInit) {calcHud.init();}
 			calcHud.render(matrixStack, deltaTick);
 		});
-		ClientTickEvents.END.register(client -> {
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (keyBindingR.wasPressed()) {
 				if(client.currentScreen == null) {
 					client.setScreen(calcHud);
@@ -51,7 +50,7 @@ public class MinecalcClient implements ClientModInitializer {
 
 	public static Config loadConfig() {
 		try {
-			File file = new File(QuiltLoader.getConfigDir().toString(),"minecalc.json");
+			File file = new File(FabricLoader.getInstance().getConfigDir().toString(), "minecalc.json");
 
 			if (!file.exists()) saveConfig(new Config());
 
@@ -65,7 +64,7 @@ public class MinecalcClient implements ClientModInitializer {
 
 	public static void saveConfig(Config config) {
 		try {
-			File file = new File(QuiltLoader.getConfigDir().toString(),"minecalc.json");
+			File file = new File(FabricLoader.getInstance().getConfigDir().toString(),"minecalc.json");
 
 			JsonElement json = jankson.toJson(config);
 			String result = json.toJson(true, true);
