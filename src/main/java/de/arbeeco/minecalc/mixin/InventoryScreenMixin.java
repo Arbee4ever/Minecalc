@@ -30,8 +30,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 		addDrawableChild(button);
 	}
 
-	@Inject(method = {"m_ekzothcc", "lambda$init$0", "method_19891"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TexturedButtonWidget;setPos(II)V"))
+	@Inject(method = "method_19891", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;setPosition(II)V"))
 	public void addDrawableChild(CallbackInfo ci) {
-		button.setPos(this.x + 129, this.height / 2 - 22);
+		button.setPosition(this.x + 129, this.height / 2 - 22);
 	}
 }
