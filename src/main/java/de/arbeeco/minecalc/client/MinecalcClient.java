@@ -34,7 +34,9 @@ public class MinecalcClient implements ClientModInitializer {
 		config = loadConfig();
 		MinecalcKeybinds.setupKeybinds();
 		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
-			if (!calcHud.isInit) {calcHud.init();}
+			if (!calcHud.isInit) {
+				calcHud.init();
+			}
 			calcHud.render(matrixStack, deltaTick);
 		});
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
