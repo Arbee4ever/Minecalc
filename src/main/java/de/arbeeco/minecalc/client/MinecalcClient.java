@@ -7,7 +7,6 @@ import de.arbeeco.minecalc.client.gui.screen.CalcScreen;
 import de.arbeeco.minecalc.config.Config;
 import de.arbeeco.minecalc.registries.MinecalcKeybinds;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -18,8 +17,6 @@ import org.mariuszgromada.math.mxparser.License;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
-
-import static de.arbeeco.minecalc.registries.MinecalcKeybinds.keyBindingR;
 
 public class MinecalcClient implements ClientModInitializer {
 	public static final Logger logger = LogManager.getLogger();
@@ -36,15 +33,6 @@ public class MinecalcClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
 			if (!calcHud.isInit) {calcHud.init();}
 			calcHud.render(matrixStack, deltaTick);
-		});
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (keyBindingR.wasPressed()) {
-				if(client.currentScreen == null) {
-					client.setScreen(calcHud);
-				} else {
-					client.setScreen(null);
-				}
-			}
 		});
 	}
 
