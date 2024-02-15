@@ -8,9 +8,10 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 
 public class MinecalcKeybinds {
-	public static KeyBinding keyBindingR;
+	public static KeyBinding keyBindingToggleMode;
+	public static KeyBinding keyBindingToggleUI;
 	public static void setupKeybinds() {
-		keyBindingR = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+		keyBindingToggleMode = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.minecalc.opencalc",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,
@@ -21,7 +22,7 @@ public class MinecalcKeybinds {
 
 	public static void registerClientTickEvents() {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			while (keyBindingR.wasPressed()) {
+			while (keyBindingToggleMode.wasPressed()) {
 				if (!MinecalcClient.config.showCalculator) return;
 				if (client.currentScreen == null) {
 					client.setScreen(MinecalcClient.calcHud);

@@ -1,10 +1,9 @@
 plugins {
 	id 'maven-publish'
-	id 'fabric-loom' version '1.2-SNAPSHOT'
+	id 'fabric-loom' version '1.5-SNAPSHOT'
 	id "com.modrinth.minotaur" version "2.+"
 }
 
-archivesBaseName = project.archives_base_name
 version = project.version
 group = project.maven_group
 
@@ -35,6 +34,10 @@ dependencies {
 	include(implementation "org.mariuszgromada.math:MathParser.org-mXparser:${mxparser}")
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}+${minecraft_version}"
+}
+
+base {
+	archivesName = project.archives_base_name
 }
 
 processResources {
@@ -68,7 +71,7 @@ java {
 // If you plan to use a different file for the license, don't forget to change the file name here!
 jar {
 	from("LICENSE") {
-		rename { "${it}_${archivesBaseName}" }
+		rename { "${it}_${base.archivesName.get()}" }
 	}
 }
 

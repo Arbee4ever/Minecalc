@@ -1,14 +1,11 @@
 package de.arbeeco.minecalc.client.gui.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -18,6 +15,7 @@ public class CalcScreen extends Screen {
 	private final MinecraftClient client;
 	private static final Identifier TEXTURE = new Identifier("minecalc", "textures/gui/calculator.png");
 	public static ATextField textField;
+	public static ATextField resultField;
 	private int scaledWidth;
 	private int scaledHeight;
 	public boolean isInit = false;
@@ -50,7 +48,8 @@ public class CalcScreen extends Screen {
 		if (playerEntity != null) {
 			scaledWidth = client.getWindow().getScaledWidth();
 			scaledHeight = client.getWindow().getScaledHeight();
-			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, textField, Text.literal(""));
+			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 150, 80, 20, Text.literal(""));
+			resultField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 130, 80, 20, Text.literal(""));
 			for (int i = 0; i < calc.length; i++) {
 				addButton(calc, i);
 			}
@@ -59,6 +58,7 @@ public class CalcScreen extends Screen {
 			}
 			addSelectableChild(textField);
 			setInitialFocus(textField);
+			addSelectableChild(resultField);
 			isInit = true;
 			super.init();
 		}
@@ -67,10 +67,11 @@ public class CalcScreen extends Screen {
 	public void render(DrawContext drawContext, float tickDelta) {
 		PlayerEntity playerEntity = this.getCameraPlayer();
 		if (playerEntity != null) {
-			if (textField != null && buttons != null) {
+			if (textField != null && resultField != null && buttons != null) {
 				if (MinecalcClient.config.showCalculator) {
 					renderCalculator(drawContext);
 					textField.render(drawContext, (int) getX(), (int) getY(), tickDelta);
+					resultField.render(drawContext, (int) getX(), (int) getY(), tickDelta);
 					for (ButtonWidget button : buttons) {
 						button.render(drawContext, (int) getX(), (int) getY(), tickDelta);
 					}
@@ -79,16 +80,14 @@ public class CalcScreen extends Screen {
 		}
 	}
 
-	@Override
-	public void tick() {
-		textField.tick();
-	}
-
 	private void renderCalculator(DrawContext drawContext) {
 		scaledWidth = client.getWindow().getScaledWidth();
 		scaledHeight = client.getWindow().getScaledHeight();
-		drawContext.drawTexture(TEXTURE, scaledWidth - 90, scaledHeight - 135, 0, 0, 90, 135);
+		drawContext.drawTexture(TEXTURE, scaledWidth - 90, scaledHeight - 155, 0, 0, 90, 155);
 	}
+
+	@Override
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
 
 	private ButtonWidget addButton(String[] in, int index) {
 		if (count == calc.length + calcUtil.length) {
@@ -111,7 +110,7 @@ public class CalcScreen extends Screen {
 				.dimensions(x, y, 20, 20)
 				.build();
 			case "=" -> button = ButtonWidget.builder(Text.literal(in[index]), (button1) -> {
-					textField.calculate(textField.getText());
+					resultField.setText(textField.calculate(textField.getText()));
 				})
 				.dimensions(x, y, 20, 20)
 				.build();
@@ -146,7 +145,7 @@ public class CalcScreen extends Screen {
 		}
 		buttons[count] = button;
 		count++;
-		addSelectableChild(button);
+		addDrawableChild(button);
 		return button;
 	}
 
@@ -155,16 +154,10 @@ public class CalcScreen extends Screen {
 	}
 
 	private double getX() {
-		if (client.mouse.isCursorLocked()) {
-			return 0;
-		}
 		return (int) (this.client.mouse.getX() * this.client.getWindow().getScaledWidth() / (double) this.client.getWindow().getWidth());
 	}
 
 	private double getY() {
-		if (client.mouse.isCursorLocked()) {
-			return 0;
-		}
 		return (int) (this.client.mouse.getY() * this.client.getWindow().getScaledHeight() / (double) this.client.getWindow().getHeight());
 	}
 
