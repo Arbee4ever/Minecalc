@@ -28,8 +28,8 @@ public class CalcUtilityScreen extends Screen {
 		super.init();
 		screenWidth = client.getWindow().getScaledWidth();
 		screenHeight = client.getWindow().getScaledHeight();
-		x = screenWidth/2-width/2;
-		y = screenHeight/2-height/2;
+		x = screenWidth / 2 - width / 2;
+		y = screenHeight / 2 - height / 2;
 		ButtonWidget button = ButtonWidget.builder(Text.translatable("gui.minecalc.graphing"), (button1) -> {
 				MinecraftClient.getInstance().setScreen(new GraphingCalcScreen(Text.translatable("gui.minecalc.graphing")));
 			})

@@ -54,8 +54,6 @@ public class GraphDisplayWidget extends ClickableWidget implements Drawable {
 			if (pixelY <= y) {
 				continue;
 			} else if (pixelY >= y + height + 1) {
-				System.out.println("PixelY: " + pixelY);
-				System.out.println("Y: " + (y + height + 1));
 				continue;
 			}
 			context.fill(RenderLayer.getGuiOverlay(), pixelX, pixelY, pixelX + scale, pixelY - scale, Color.BLACK.getRGB());
