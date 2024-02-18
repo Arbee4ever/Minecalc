@@ -8,11 +8,13 @@ version = project.version
 group = project.maven_group
 
 repositories {
+	mavenCentral()
 	maven { url "https://maven.shedaniel.me/" }
 	maven {
 		name = "CottonMC"
 		url = "https://server.bbkr.space/artifactory/libs-release"
 	}
+	maven { url 'https://jitpack.io' }
 }
 
 repositories {

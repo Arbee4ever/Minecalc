@@ -192,7 +192,7 @@ public class CalcScreen extends Screen {
 			return true;
 		}
 		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
-			textField.calculate(textField.getText());
+			resultField.setText(textField.calculate(textField.getText()));
 			return true;
 		}
 		focusOn(textField);

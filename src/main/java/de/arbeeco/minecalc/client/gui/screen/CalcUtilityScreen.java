@@ -1,14 +1,22 @@
 package de.arbeeco.minecalc.client.gui.screen;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class CalcUtilityScreen extends Screen {
-	private int scaledWidth;
-	private int scaledHeight;
+	private int screenWidth;
+	private int screenHeight;
+	private int width = 360;
+	private int height = 175;
+	private int x;
+	private int y;
 	private static final Identifier BACKGROUND_TEXTURE = new Identifier("minecalc", "textures/gui/calculator_utility.png");
 
 	protected CalcUtilityScreen(Text text) {
@@ -16,20 +24,28 @@ public class CalcUtilityScreen extends Screen {
 	}
 
 	@Override
-	public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-		renderBackground(drawContext, mouseX, mouseY, delta);
-		scaledWidth = client.getWindow().getScaledWidth();
-		scaledHeight = client.getWindow().getScaledHeight();
-		Text orderedText = Text.translatable("gui.minecalc.wip");
-		textRenderer.draw(orderedText, (float)(scaledWidth/2 - textRenderer.getWidth(orderedText) / 2), (float)scaledHeight/2-5, 0, true, drawContext.getMatrices().peek().getPositionMatrix(), drawContext.getVertexConsumers(), TextRenderer.TextLayerType.NORMAL, 0, 255);
-		super.render(drawContext, mouseX, mouseY, delta);
+	protected void init() {
+		super.init();
+		screenWidth = client.getWindow().getScaledWidth();
+		screenHeight = client.getWindow().getScaledHeight();
+		x = screenWidth/2-width/2;
+		y = screenHeight/2-height/2;
+		ButtonWidget button = ButtonWidget.builder(Text.translatable("gui.minecalc.graphing"), (button1) -> {
+				MinecraftClient.getInstance().setScreen(new GraphingCalcScreen(Text.translatable("gui.minecalc.graphing")));
+			})
+			.dimensions(x+5, y+5, 110, 20)
+			.build();
+		addDrawableChild(button);
 	}
 
 	@Override
-	public void renderBackground(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-		super.renderBackground(drawContext, mouseX, mouseY, delta);
-		int width = 360;
-		int height = 175;
-		drawContext.drawTexture(BACKGROUND_TEXTURE, scaledWidth/2-width/2, scaledHeight/2-height/2, 0, 0, width, height, 360, 360);
+	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+		super.render(context, mouseX, mouseY, delta);
+	}
+
+	@Override
+	public void renderInGameBackground(DrawContext context) {
+		super.renderInGameBackground(context);
+		context.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 360, 360);
 	}
 }
