@@ -13,18 +13,13 @@ import org.lwjgl.glfw.GLFW;
 public class GraphingCalcScreen extends Screen {
 	private int screenWidth;
 	private int screenHeight;
-	private int width = 226;
-	private int height = 245;
+	private final int width = 226;
+	private final int height = 245;
 	private int x;
 	private int y;
 	private static final Identifier MINECALC_GRAPHING_WINDOW_TEXTURE = new Identifier("minecalc", "textures/gui/graphing_calculator/window.png");
 	private ATextField functionField;
 	private GraphDisplayWidget graphWidget;
-	private ButtonWidget xUp;
-	private ButtonWidget xDown;
-	private ButtonWidget yUp;
-	private ButtonWidget yDown;
-	private ButtonWidget resetScoll;
 
 	protected GraphingCalcScreen(Text title) {
 		super(title);
@@ -40,36 +35,41 @@ public class GraphingCalcScreen extends Screen {
 		functionField = new ATextField(client.textRenderer, x + 7, y + 5, width - 14, 20, Text.literal(""));
 		functionField.setMaxLength(999);
 		graphWidget = new GraphDisplayWidget(x + 9, y + 28, width - 18, height - 37, Text.translatable("gui.minecalc.graphing"));
-		xDown = ButtonWidget.builder(Text.literal("←"), (button) -> {
-				graphWidget.scrollX(-1);
-			})
-			.dimensions(x, y + height, 20, 20)
-			.build();
-		xUp = ButtonWidget.builder(Text.literal("→"), (button) -> {
-				graphWidget.scrollX(1);
-			})
-			.dimensions(x + width - 20, y + height, 20, 20)
-			.build();
-		yUp = ButtonWidget.builder(Text.literal("↑"), (button) -> {
-				graphWidget.scrollY(1);
-			})
-			.dimensions(x - 20, y, 20, 20)
-			.build();
-		yDown = ButtonWidget.builder(Text.literal("↓"), (button) -> {
-				graphWidget.scrollY(-1);
-			})
-			.dimensions(x - 20, y + height - 20, 20, 20)
-			.build();
-		resetScoll = ButtonWidget.builder(Text.literal("0"), (button -> {
-				graphWidget.resetScroll();
-			}))
-			.dimensions(x - 20, y + height, 20, 20)
-			.build();
-		addDrawableChild(xDown);
-		addDrawableChild(xUp);
-		addDrawableChild(yUp);
-		addDrawableChild(yDown);
-		addDrawableChild(resetScoll);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("←"), (button) -> graphWidget.scrollX(-1))
+				.dimensions(x, y + height, 20, 20)
+				.build()
+		);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("→"), (button) -> graphWidget.scrollX(1))
+				.dimensions(x + width - 20, y + height, 20, 20)
+				.build()
+		);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("↑"), (button) -> graphWidget.scrollY(1))
+				.dimensions(x - 20, y, 20, 20)
+				.build()
+		);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("↓"), (button) -> graphWidget.scrollY(-1))
+				.dimensions(x - 20, y + height - 20, 20, 20)
+				.build()
+		);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("0"), (button -> graphWidget.resetScroll()))
+				.dimensions(x - 20, y + height, 20, 20)
+				.build()
+		);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("+"), (button -> graphWidget.zoom(1)))
+				.dimensions(x + width, y + height - 20, 20, 20)
+				.build()
+		);
+		addDrawableChild(
+			ButtonWidget.builder(Text.literal("-"), (button -> graphWidget.zoom(-1)))
+				.dimensions(x + width, y + height - 40, 20, 20)
+				.build()
+		);
 		addSelectableChild(functionField);
 		setInitialFocus(functionField);
 		addDrawableChild(graphWidget);

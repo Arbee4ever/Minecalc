@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class GraphDisplayWidget extends ClickableWidget implements Drawable {
-	private int screenWidth;
-	private int screenHeight;
 	private final int width;
 	private final int height;
 	private final int x;
@@ -42,27 +40,51 @@ public class GraphDisplayWidget extends ClickableWidget implements Drawable {
 
 	@Override
 	protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		context.drawTexture(MINECALC_GRAPHING_BACKGROUND_TEXTURE, x, y, minX*scale, minY*scale, width, height, 16, 16);
+		context.drawTexture(MINECALC_GRAPHING_BACKGROUND_TEXTURE, x, y, minX * scale, minY * scale, width, height, 16, 16);
 		if (Objects.equals(function, "")) return;
-		for (int i = minX; i <= maxX; i++) {
+		for (int i = minX - 1; i <= maxX; i++) {
 			if (values.get(i) == null) {
 				Expression eq = new Expression(function.replace("x", String.valueOf(i)));
 				values.put(i, (int) eq.calculate());
 			}
-			int pixelX = x + i * scale - (minX * scale);
-			int pixelY = (y + height - values.get(i) * scale) - (minY * scale);
-			if (pixelY <= y) {
-				continue;
-			} else if (pixelY >= y + height + 1) {
-				continue;
+			if(values.get(i-1) != null) {
+				drawLine(context, i - 1, values.get(i - 1), i, values.get(i), Color.BLACK.getRGB());
 			}
-			context.fill(RenderLayer.getGuiOverlay(), pixelX, pixelY, pixelX + scale, pixelY - scale, Color.BLACK.getRGB());
 		}
 	}
 
 	@Override
 	protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 
+	}
+
+	private void drawLine(DrawContext context, int x0, int y0, int x1, int y1, int color) {
+		int dx = Math.abs(x1 - x0);
+		int dy = Math.abs(y1 - y0);
+		int sx = x0 < x1 ?  1 : -1;
+		int sy = y0 < y1 ?  1 : -1;
+		int err = dx - dy;
+		int e2;
+
+		while (true) {
+			int pixelX = x + x0 * scale - (minX * scale);
+			int pixelY = (y + height - (y0 * scale)) - (minY * scale);
+			if (pixelY - scale > y - 1 && pixelY <= y + height) {
+				context.fill(RenderLayer.getGuiOverlay(), pixelX, pixelY, pixelX + scale, pixelY - scale, color);
+			}
+			if (x0 == x1 && y0 == y1) {
+				break;
+			}
+			e2 =  2 * err;
+			if (e2 > -dy) {
+				err = err - dy;
+				x0 = x0 + sx;
+			}
+			if (e2 < dx) {
+				err = err + dx;
+				y0 = y0 + sy;
+			}
+		}
 	}
 
 	@Override
@@ -91,6 +113,10 @@ public class GraphDisplayWidget extends ClickableWidget implements Drawable {
 	public void scrollY(int amount) {
 		minY -= amount;
 		maxY -= amount;
+	}
+
+	public void zoom(int amount) {
+		scale += amount;
 	}
 
 	public void setFunction(String function) {
