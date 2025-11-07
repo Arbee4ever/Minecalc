@@ -3,21 +3,25 @@ package de.arbeeco.minecalc.client.gui.screen;
 import de.arbeeco.minecalc.client.MinecalcClient;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class CalcScreen extends Screen {
-	private final MinecraftClient client;
-	private static final Identifier TEXTURE = new Identifier("minecalc", "textures/gui/calculator.png");
+	private static MinecraftClient client = null;
+	private static final Identifier TEXTURE = Identifier.of("minecalc", "textures/gui/calculator.png");
 	public static ATextField textField;
 	public static ATextField resultField;
-	private int scaledWidth;
-	private int scaledHeight;
+	private static int scaledWidth;
+	private static int scaledHeight;
 	public boolean isInit = false;
 	int count = 0;
 	static String[] calc = {
@@ -44,8 +48,7 @@ public class CalcScreen extends Screen {
 	public void init() {
 		clearChildren();
 		setFocused(null);
-		PlayerEntity playerEntity = this.getCameraPlayer();
-		if (playerEntity != null) {
+		if (client.getWindow() != null) {
 			scaledWidth = client.getWindow().getScaledWidth();
 			scaledHeight = client.getWindow().getScaledHeight();
 			textField = new ATextField(client.textRenderer, scaledWidth - 85, scaledHeight - 150, 80, 20, Text.literal(""));
@@ -56,38 +59,35 @@ public class CalcScreen extends Screen {
 			for (int i = 0; i < calcUtil.length; i++) {
 				addButton(calcUtil, i);
 			}
-			addSelectableChild(textField);
+			addDrawableChild(textField);
 			setInitialFocus(textField);
-			addSelectableChild(resultField);
+			addDrawableChild(resultField);
 			isInit = true;
 			super.init();
 		}
 	}
 
-	public void render(DrawContext drawContext, float tickDelta) {
-		PlayerEntity playerEntity = this.getCameraPlayer();
-		if (playerEntity != null) {
-			if (textField != null && resultField != null && buttons != null) {
-				if (MinecalcClient.config.showCalculator) {
-					renderCalculator(drawContext);
-					textField.render(drawContext, (int) getX(), (int) getY(), tickDelta);
-					resultField.render(drawContext, (int) getX(), (int) getY(), tickDelta);
-					for (ButtonWidget button : buttons) {
-						button.render(drawContext, (int) getX(), (int) getY(), tickDelta);
-					}
+	public void render(DrawContext context, RenderTickCounter renderTickCounter) {
+		renderBackground(context, (int) getX(), (int) getY(), renderTickCounter.getDynamicDeltaTicks());
+		if (textField != null && resultField != null && buttons != null) {
+			if (MinecalcClient.config.showCalculator) {
+				textField.render(context, (int) getX(), (int) getY(), renderTickCounter.getDynamicDeltaTicks());
+				resultField.render(context, (int) getX(), (int) getY(), renderTickCounter.getDynamicDeltaTicks());
+				for (ButtonWidget button : buttons) {
+					button.render(context, (int) getX(), (int) getY(), renderTickCounter.getDynamicDeltaTicks());
 				}
 			}
 		}
 	}
 
-	private void renderCalculator(DrawContext drawContext) {
-		scaledWidth = client.getWindow().getScaledWidth();
-		scaledHeight = client.getWindow().getScaledHeight();
-		drawContext.drawTexture(TEXTURE, scaledWidth - 90, scaledHeight - 155, 0, 0, 90, 155);
-	}
-
 	@Override
-	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {}
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+		if (MinecalcClient.config.showCalculator) {
+			scaledWidth = client.getWindow().getScaledWidth();
+			scaledHeight = client.getWindow().getScaledHeight();
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, scaledWidth - 90, scaledHeight - 155, 0, 0, 90, 155, 256, 256);
+		}
+	}
 
 	private ButtonWidget addButton(String[] in, int index) {
 		if (count == calc.length + calcUtil.length) {
@@ -153,12 +153,12 @@ public class CalcScreen extends Screen {
 		return !(client.getCameraEntity() instanceof PlayerEntity) ? null : (PlayerEntity) client.getCameraEntity();
 	}
 
-	private double getX() {
-		return (int) (this.client.mouse.getX() * this.client.getWindow().getScaledWidth() / (double) this.client.getWindow().getWidth());
+	private static double getX() {
+		return (int) (client.mouse.getX() * client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
 	}
 
-	private double getY() {
-		return (int) (this.client.mouse.getY() * this.client.getWindow().getScaledHeight() / (double) this.client.getWindow().getHeight());
+	private static double getY() {
+		return (int) (client.mouse.getY() * client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
 	}
 
 	private int getCoord(String axis) {
@@ -176,8 +176,8 @@ public class CalcScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		return super.mouseClicked(mouseX, mouseY, button);
+	public boolean mouseClicked(Click click, boolean doubled) {
+		return super.mouseClicked(click, doubled);
 	}
 
 	@Override
@@ -186,16 +186,16 @@ public class CalcScreen extends Screen {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+	public boolean keyPressed(KeyInput input) {
+		if (input.getKeycode() == GLFW.GLFW_KEY_ESCAPE) {
 			client.setScreen(null);
 			return true;
 		}
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+		if (input.getKeycode() == GLFW.GLFW_KEY_ENTER || input.getKeycode() == GLFW.GLFW_KEY_KP_ENTER) {
 			resultField.setText(textField.calculate(textField.getText()));
 			return true;
 		}
-		focusOn(textField);
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		setFocused(textField);
+		return super.keyPressed(input);
 	}
 }

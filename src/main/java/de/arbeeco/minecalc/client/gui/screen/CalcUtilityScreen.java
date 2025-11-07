@@ -2,6 +2,7 @@ package de.arbeeco.minecalc.client.gui.screen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
@@ -14,10 +15,10 @@ public class CalcUtilityScreen extends Screen {
 	private int screenWidth;
 	private int screenHeight;
 	private int width = 360;
-	private int height = 175;
+	private int height = 180;
 	private int x;
 	private int y;
-	private static final Identifier BACKGROUND_TEXTURE = new Identifier("minecalc", "textures/gui/calculator_utility.png");
+	private static final Identifier BACKGROUND_TEXTURE = Identifier.of("minecalc", "textures/gui/calculator_utility.png");
 
 	protected CalcUtilityScreen(Text text) {
 		super(text);
@@ -40,12 +41,7 @@ public class CalcUtilityScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 360, 360);
 		super.render(context, mouseX, mouseY, delta);
-	}
-
-	@Override
-	public void renderInGameBackground(DrawContext context) {
-		super.renderInGameBackground(context);
-		context.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 360, 360);
 	}
 }

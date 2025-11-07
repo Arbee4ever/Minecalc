@@ -8,8 +8,11 @@ import de.arbeeco.minecalc.config.Config;
 import de.arbeeco.minecalc.registries.MinecalcKeybinds;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mariuszgromada.math.mxparser.License;
@@ -30,9 +33,9 @@ public class MinecalcClient implements ClientModInitializer {
 		calcHud = new CalcScreen(MinecraftClient.getInstance());
 		config = loadConfig();
 		MinecalcKeybinds.setupKeybinds();
-		HudRenderCallback.EVENT.register((matrixStack, deltaTick) -> {
+		HudElementRegistry.attachElementBefore(VanillaHudElements.HOTBAR, Identifier.of("minecalc", "calculatorhud"), (context, tickCounter) -> {
 			if (!calcHud.isInit) {calcHud.init();}
-			calcHud.render(matrixStack, deltaTick);
+			calcHud.render(context, tickCounter);
 		});
 	}
 

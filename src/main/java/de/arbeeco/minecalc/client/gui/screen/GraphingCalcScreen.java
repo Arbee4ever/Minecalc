@@ -1,11 +1,14 @@
 package de.arbeeco.minecalc.client.gui.screen;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.arbeeco.minecalc.client.gui.widget.ATextField;
 import de.arbeeco.minecalc.client.gui.widget.GraphDisplayWidget;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -17,7 +20,7 @@ public class GraphingCalcScreen extends Screen {
 	private final int height = 245;
 	private int x;
 	private int y;
-	private static final Identifier MINECALC_GRAPHING_WINDOW_TEXTURE = new Identifier("minecalc", "textures/gui/graphing_calculator/window.png");
+	private static final Identifier MINECALC_GRAPHING_WINDOW_TEXTURE = Identifier.of("minecalc", "textures/gui/graphing_calculator/window.png");
 	private ATextField functionField;
 	private GraphDisplayWidget graphWidget;
 
@@ -46,12 +49,12 @@ public class GraphingCalcScreen extends Screen {
 				.build()
 		);
 		addDrawableChild(
-			ButtonWidget.builder(Text.literal("↑"), (button) -> graphWidget.scrollY(1))
+			ButtonWidget.builder(Text.literal("↑"), (button) -> graphWidget.scrollY(-1))
 				.dimensions(x - 20, y, 20, 20)
 				.build()
 		);
 		addDrawableChild(
-			ButtonWidget.builder(Text.literal("↓"), (button) -> graphWidget.scrollY(-1))
+			ButtonWidget.builder(Text.literal("↓"), (button) -> graphWidget.scrollY(1))
 				.dimensions(x - 20, y + height - 20, 20, 20)
 				.build()
 		);
@@ -85,21 +88,20 @@ public class GraphingCalcScreen extends Screen {
 	}
 
 	public void drawWindow(DrawContext context) {
-		RenderSystem.enableBlend();
-		context.drawTexture(MINECALC_GRAPHING_WINDOW_TEXTURE, x, y, 0, 0, width, height, 256, 256);
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, MINECALC_GRAPHING_WINDOW_TEXTURE, x, y, 0, 0, width, height, 256, 256);
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+	public boolean keyPressed(KeyInput input) {
+		if (input.getKeycode() == GLFW.GLFW_KEY_ESCAPE) {
 			client.setScreen(null);
 			return true;
 		}
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+		if (input.getKeycode() == GLFW.GLFW_KEY_ENTER || input.getKeycode() == GLFW.GLFW_KEY_KP_ENTER) {
 			graphWidget.setFunction(functionField.getText());
 			return true;
 		}
-		focusOn(functionField);
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		setFocused(functionField);
+		return super.keyPressed(input);
 	}
 }
